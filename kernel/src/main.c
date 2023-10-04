@@ -39,9 +39,8 @@ void _start(void) {
 
     console_init(framebuffer); // initialise the console
 
-    console_puts("Hello, world!\n"); // print a message
-
-
+    console_puts("Hello, world!\n");
+    
     // We're done, just hang...
     hcf();
 }

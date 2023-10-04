@@ -17,6 +17,14 @@ void console_init(struct limine_framebuffer* framebuffer) {
 }
 
 void console_puts(const char* str) {
+    console_put_with_color(str, 0xFFFFFF, 0x000000);
+}
+
+void console_put_with_color(const char *str, uint32_t fg, uint32_t bg)
+{
+    ssfn_dst.fg = fg;
+    ssfn_dst.bg = bg;
+
     while (*str) {
         // Handle control strings
         if (*str == '\n') {

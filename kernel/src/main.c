@@ -40,9 +40,12 @@ void _start(void) {
 
     console_init(framebuffer); // initialise the console
 
-    // test printing
-    console_puts("Hello, world!\n");
-    
+    for (int i = 0; i < 100; i++) {
+        char integer[16] = "";
+        citoa(i, integer, 10);
+        console_puts(integer);
+        console_puts("\n");
+    }
 
     // We're done, just hang...
     hcf();

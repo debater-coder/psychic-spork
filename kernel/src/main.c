@@ -39,7 +39,7 @@ void _start(void) {
 
     console_init(framebuffer); // initialise the console
 
-    console_puts("Hello, world!"); // print a message
+    console_puts("Hello, world!\n"); // print a message
 
 
     // We're done, just hang...

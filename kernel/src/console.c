@@ -18,6 +18,14 @@ void console_init(struct limine_framebuffer* framebuffer) {
 
 void console_puts(const char* str) {
     while (*str) {
+        // Handle control strings
+        if (*str == '\n') {
+            ssfn_dst.x = 0;
+            ssfn_dst.y += ssfn_src->height;
+            str++;
+            continue;
+        }
+
         ssfn_putc(*str++);
     }
 }

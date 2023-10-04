@@ -41,10 +41,7 @@ void _start(void) {
     console_init(framebuffer); // initialise the console
 
     for (int i = 0; i < 100; i++) {
-        char integer[16] = "";
-        citoa(i, integer, 10);
-        console_puts(integer);
-        console_puts("\n");
+        console_printf("Hello, world! %d\n", i);
     }
 
     // We're done, just hang...

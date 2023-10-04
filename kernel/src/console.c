@@ -1,6 +1,7 @@
 #include "console.h"
 
 #include "font.h"
+#include <stdarg.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #define SSFN_CONSOLEBITMAP_CONTROL
@@ -29,4 +30,67 @@ void console_put_with_color(const char *str, uint32_t fg)
     while (*str) {
         ssfn_putc(*str++);
     }
+}
+
+void console_printf(const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+
+    ssfn_dst.fg = 0xFFFFFF;
+
+    while (*fmt) {
+        if (*fmt == '%') {
+            fmt++;
+            switch (*fmt) {
+                case 's': {
+                    char *str = va_arg(args, char*);
+                    while (*str) {
+                        ssfn_putc(*str++);
+                    }
+                    break;
+                }
+                case 'c': {
+                    char c = va_arg(args, int);
+                    ssfn_putc(c);
+                    break;
+                }
+                case 'd': {
+                    int i = va_arg(args, int);
+                    char integer[16] = "";
+                    citoa(i, integer, 10);
+                    console_puts(integer);
+                    break;
+                }
+                case 'x': {
+                    int i = va_arg(args, int);
+                    char integer[16] = "";
+                    citoa(i, integer, 16);
+                    console_puts(integer);
+                    break;
+                }
+                case 'b': {
+                    int i = va_arg(args, int);
+                    char integer[16] = "";
+                    citoa(i, integer, 2);
+                    console_puts(integer);
+                    break;
+                }
+                case '%': {
+                    ssfn_putc('%');
+                    break;
+                }
+                default: {
+                    ssfn_putc('%');
+                    ssfn_putc(*fmt);
+                    break;
+                }
+            }
+            fmt++;
+        }
+
+        ssfn_putc(*fmt++);
+    }
+
+    va_end(args);
 }

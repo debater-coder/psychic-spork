@@ -3,6 +3,7 @@
 #include <limine.h>
 #include "memory.h"
 #include "console.h"
+#include "utils.h"
 
 
 // The Limine requests can be placed anywhere, but it is important that
@@ -39,8 +40,10 @@ void _start(void) {
 
     console_init(framebuffer); // initialise the console
 
+    // test printing
     console_puts("Hello, world!\n");
     
+
     // We're done, just hang...
     hcf();
 }

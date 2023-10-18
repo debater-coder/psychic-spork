@@ -1,7 +1,6 @@
 #include "console.h"
 
 #include "font.h"
-#include <stdarg.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #define SSFN_CONSOLEBITMAP_CONTROL
@@ -37,14 +36,33 @@ void console_put_with_color(const char *str, uint32_t fg)
 
 static char hex_digits[] = "0123456789abcdef";
 
+unsigned int log2(unsigned int n)
+{
+    unsigned int val;
+    for (val = 0; n > 1; val++, n >>= 1)
+        ;
+    return val;
+}
+
 void to_hex_string(unsigned int num, char *result)
 {
-    while (num != 0)
+    if (num == 0)
     {
-        *result = hex_digits[num % 16];
-        num /= 16;
+        *result = '0';
         result++;
+        *result = '\0';
     }
 
-    result = "\0";
+    int bits = log2(num);
+    int length = (bits + (4 - 1)) / 4;
+
+    // TODO: malloc length instead of needing input string
+
+    for (int i = length - 1; i >= 0; i--)
+    {
+        result[i] = hex_digits[num % 16];
+        num /= 16;
+    }
+
+    result[length] = '\0';
 }

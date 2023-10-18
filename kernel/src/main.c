@@ -5,16 +5,18 @@
 #include "console.h"
 #include "utils.h"
 
-// The Limine requests can be placed anywhere, but it is important that
-// the compiler does not optimise them away, so, usually, they should
-// be made volatile or equivalent.
-
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0};
 
+static volatile struct limine_memmap_request memmap_request = {
+    .id = LIMINE_MEMMAP_REQUEST,
+    .revision = 0,
+};
+
 // Halt and catch fire function.
-static void hcf()
+static void
+hcf()
 {
     asm("cli");
     for (;;)
@@ -45,12 +47,31 @@ void _start(void)
 
     console_init(framebuffer); // initialise the console
 
-    char result[16];
-    to_hex_string(0xdeadbeef, result);
+    if (memmap_request.response == NULL)
+    {
+        panic("No memory map!");
+    }
 
-    console_puts(result);
+    console_puts("memory areas:\n");
+    for (int i = 0; i < memmap_request.response->entry_count; i++)
+    {
+        if ((*memmap_request.response->entries)[i].type == LIMINE_MEMMAP_USABLE)
+        {
+            char start[16];
 
-    console_puts("\n");
+            console_puts("   start: 0x");
+            to_hex_string((*memmap_request.response->entries)[i].base, start);
+            console_puts(start);
+            console_puts("\n");
+
+            char length[16];
+
+            console_puts("   length: 0x");
+            to_hex_string((*memmap_request.response->entries)[i].length, length);
+            console_puts(length);
+            console_puts("\n\n");
+        }
+    }
 
     console_puts("It did not fail!");
 

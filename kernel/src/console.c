@@ -36,15 +36,15 @@ void console_put_with_color(const char *str, uint32_t fg)
 
 static char hex_digits[] = "0123456789abcdef";
 
-unsigned int log2(unsigned int n)
+unsigned long long int log2(unsigned long long int n)
 {
-    unsigned int val;
+    unsigned long long int val;
     for (val = 0; n > 1; val++, n >>= 1)
         ;
     return val;
 }
 
-void to_hex_string(unsigned int num, char *result)
+void to_hex_string(unsigned long long int num, char *result)
 {
     if (num == 0)
     {
@@ -54,7 +54,7 @@ void to_hex_string(unsigned int num, char *result)
     }
 
     int bits = log2(num);
-    int length = (bits + (4 - 1)) / 4;
+    int length = (bits + 4) / 4;
 
     // TODO: malloc length instead of needing input string
 

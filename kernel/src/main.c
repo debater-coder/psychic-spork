@@ -45,6 +45,13 @@ void _start(void)
 
     console_init(framebuffer); // initialise the console
 
+    char result[16];
+    to_hex_string(0xdeadbeef, result);
+
+    console_puts(result);
+
+    console_puts("\n");
+
     console_puts("It did not fail!");
 
     // We're done, just hang...

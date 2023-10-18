@@ -34,3 +34,17 @@ void console_put_with_color(const char *str, uint32_t fg)
         ssfn_putc(*str++);
     }
 }
+
+static char hex_digits[] = "0123456789abcdef";
+
+void to_hex_string(unsigned int num, char *result)
+{
+    while (num != 0)
+    {
+        *result = hex_digits[num % 16];
+        num /= 16;
+        result++;
+    }
+
+    result = "\0";
+}

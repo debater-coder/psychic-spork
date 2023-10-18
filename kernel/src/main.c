@@ -5,33 +5,38 @@
 #include "console.h"
 #include "utils.h"
 
-
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
 // be made volatile or equivalent.
 
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
-    .revision = 0
-};
-
-
+    .revision = 0};
 
 // Halt and catch fire function.
-static void hcf(void) {
-    asm ("cli");
-    for (;;) {
-        asm ("hlt");
+static void hcf()
+{
+    asm("cli");
+    for (;;)
+    {
+        asm("hlt");
     }
+}
+
+static void panic(char *message)
+{
+    console_put_with_color(message, 0xff8888);
+    hcf();
 }
 
 // The following will be our kernel's entry point.
 // If renaming _start() to something else, make sure to change the
 // linker script accordingly.
-void _start(void) {
+void _start(void)
+{
     // Ensure we got a framebuffer.
-    if (framebuffer_request.response == NULL
-     || framebuffer_request.response->framebuffer_count < 1) {
+    if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
+    {
         hcf();
     }
 
@@ -40,9 +45,9 @@ void _start(void) {
 
     console_init(framebuffer); // initialise the console
 
-    for (int i = 0; i < 100; i++) {
-        console_printf("Hello, world! %d\n", i);
-    }
+    panic("Kernel Panic!!!");
+
+    console_printf("It did not fail!");
 
     // We're done, just hang...
     hcf();

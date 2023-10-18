@@ -45,9 +45,7 @@ void _start(void)
 
     console_init(framebuffer); // initialise the console
 
-    panic("Kernel Panic!!!");
-
-    console_printf("It did not fail!");
+    console_puts("It did not fail!");
 
     // We're done, just hang...
     hcf();

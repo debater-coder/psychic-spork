@@ -3,6 +3,9 @@
     "font.h": "c",
     "console.h": "c",
     "stdint.h": "c",
-    "string_view": "c"
+    "string_view": "c",
+    "include.h": "c",
+    "limine.h": "c",
+    "stddef.h": "c"
   }
 }

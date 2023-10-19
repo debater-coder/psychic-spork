@@ -52,6 +52,8 @@ void _start(void)
         panic("No memory map!");
     }
 
+    unsigned long long int usable_memory = 0;
+
     console_puts("memory areas:\n");
     for (int i = 0; i < memmap_request.response->entry_count; i++)
     {
@@ -70,8 +72,16 @@ void _start(void)
             to_hex_string((*memmap_request.response->entries)[i].length, length);
             console_puts(length);
             console_puts("\n\n");
+
+            usable_memory += (*memmap_request.response->entries)[i].length;
         }
     }
+
+    console_puts("Usable memory: ");
+    char usable_memory_string[16];
+    to_hex_string(usable_memory / 1073741824ULL, usable_memory_string);
+    console_puts(usable_memory_string);
+    console_puts("GiB\n");
 
     console_puts("It did not fail!");
 

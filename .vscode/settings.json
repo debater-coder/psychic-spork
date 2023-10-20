@@ -6,6 +6,15 @@
     "string_view": "c",
     "include.h": "c",
     "limine.h": "c",
-    "stddef.h": "c"
+    "stddef.h": "c",
+    "atomic": "c",
+    "*.tcc": "c",
+    "deque": "c",
+    "string": "c",
+    "unordered_map": "c",
+    "vector": "c",
+    "limits": "c",
+    "system_error": "c",
+    "necessities.h": "c"
   }
 }

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <limine.h>
 #include "arch/include.h"
 #include "memory/necessities.h"
@@ -37,10 +38,10 @@ void _start(void)
         panic("No memory map!");
     }
 
-    unsigned long long int usable_memory = 0;
+    uint64_t usable_memory = 0;
 
     printf("memory areas:\n");
-    for (unsigned long long int i = 0; i < memmap_request.response->entry_count; i++)
+    for (uint64_t i = 0; i < memmap_request.response->entry_count; i++)
     {
         if ((*memmap_request.response->entries)[i].type == LIMINE_MEMMAP_USABLE)
         {

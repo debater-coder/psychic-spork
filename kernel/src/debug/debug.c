@@ -51,6 +51,10 @@ void panic(char *msg)
 {
     if (init)
     {
+        tty_ctx->clear(0xff38a169);
+
+        tty_ctx->put_string("Kernel Panic\n============\n\nYour computer has run into an irrecoverable issue and needs to restart. To\n restart, hold down the power button and you'll be back on track in no time.\nIf the problem persists, note down the error code, fork the repository and fix\nit yourself. The license mandates you must contribute the fixes back.\n\nError code: ", &(TtyStyle){.fg = 0, .bg = 0});
+
         tty_ctx->put_string(
             msg, &(TtyStyle){.fg = 0xff5555, .bg = 0});
     }

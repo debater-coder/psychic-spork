@@ -26,6 +26,24 @@ void put_string(const char *msg, const TtyStyle *style)
     }
 }
 
+static struct limine_framebuffer *global_framebuffer;
+
+void clear(unsigned int color)
+{
+    for (int i = 0; i < global_framebuffer->height; i++)
+    {
+        for (int j = 0; j < global_framebuffer->width; j++)
+        {
+            uint32_t *framebuffer_pointer = global_framebuffer->address;
+
+            framebuffer_pointer[i * global_framebuffer->pitch / 4 + j] = color;
+        }
+
+        // Reset to top
+        ssfn_dst.x = ssfn_dst.y = 0;
+    }
+}
+
 TtyContext drivers__limine_framebuffer__init(struct limine_framebuffer *framebuffer)
 {
     ssfn_src = &fontData;
@@ -36,8 +54,10 @@ TtyContext drivers__limine_framebuffer__init(struct limine_framebuffer *framebuf
     ssfn_dst.p = framebuffer->pitch; /* bytes per line */
     ssfn_dst.x = ssfn_dst.y = 0;     /* pen position */
     ssfn_dst.fg = 0xFFFFFF;          /* foreground color */
-    ssfn_dst.bg = 0xFF000000;        /* background color */
+    ssfn_dst.bg = 0;                 /* background color */
+
+    global_framebuffer = framebuffer;
 
     return (TtyContext){
-        .put_string = &put_string, .put_character = &put_character};
+        .put_string = &put_string, .put_character = &put_character, .clear = &clear};
 }

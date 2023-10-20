@@ -11,4 +11,5 @@ typedef struct TtyContext
 {
     void (*put_string)(const char *, const TtyStyle *);
     void (*put_character)(const char *, const TtyStyle *);
+    void (*clear)(unsigned int);
 } TtyContext;

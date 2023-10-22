@@ -7,6 +7,17 @@
 #include "debug/include.h"
 #include "drivers/limine_framebuffer/include.h"
 
+typedef __attribute__((__packed__)) struct InterruptDescriptor64
+{
+    uint16_t pointer_low;    // offset bits 0..15
+    uint16_t gdt_selector;   // a code segment selector in GDT or LDT
+    uint8_t ist;             // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
+    uint8_t type_attributes; // gate type, dpl, and p fields
+    uint16_t pointer_middle; // offset bits 16..31
+    uint32_t pointer_high;   // offset bits 32..63
+    uint32_t reserved;       // reserved
+} InterruptDescriptor64;
+
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0};
@@ -53,6 +64,8 @@ void _start(void)
         }
     }
     printf("Usable memory: %x GiB\n", usable_memory / 1073741824ULL);
+
+    panic("PEBKAC");
 
     printf("It did not fail!\n");
 

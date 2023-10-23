@@ -62,7 +62,7 @@ limine:
 
 .PHONY: kernel
 kernel:
-	$(MAKE) -C kernel -mno-red-zone
+	$(MAKE) -C kernel
 
 $(IMAGE_NAME).iso: limine kernel
 	rm -rf iso_root

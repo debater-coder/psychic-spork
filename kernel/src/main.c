@@ -22,15 +22,19 @@ static InterruptDescriptor64 idt[256];
 
 struct interrupt_frame;
 
+__attribute__((interrupt)) void handle_div_zero(struct interrupt_frame *frame)
+{
+    panic("EXCEPTION_DIV_ZERO");
+}
+
+__attribute__((interrupt)) void handle_page_fault(struct interrupt_frame *frame, uint64_t error_code)
+{
+    panic("EXCEPTION_PAGE_FAULT");
+}
 __attribute__((interrupt)) void
 handle_double_fault(struct interrupt_frame *frame, uint64_t error_code)
 {
     panic("EXCEPTION_DOUBLE_FAULT");
-}
-
-__attribute__((interrupt)) void handle_div_zero(struct interrupt_frame *frame)
-{
-    panic("EXCEPTION_DIV_ZERO");
 }
 
 void init_interrupts()
@@ -43,6 +47,8 @@ void init_interrupts()
 
     idt[0] = interrupts__new_entry(segment_selector, handle_div_zero, TRAP_GATE, 0);
     idt[8] = interrupts__new_entry(segment_selector, handle_double_fault, TRAP_GATE, 0);
+    idt[14] = interrupts__new_entry(segment_selector, handle_page_fault, TRAP_GATE, 0);
+
     lidt(idt, 255);
 }
 
@@ -55,9 +61,17 @@ static volatile struct limine_memmap_request memmap_request = {
     .revision = 0,
 };
 
-// The following will be our kernel's entry point.
-// If renaming _start() to something else, make sure to change the
-// linker script accordingly.
+void cause_page_fault()
+{
+    int x = *(int *)(0);
+    printf("%x", x);
+}
+
+void divide_by_zero()
+{
+    asm("movl $0, %%edx; divl %%edx" ::: "ax", "dx");
+}
+
 void _start()
 {
     // Ensure we got a framebuffer.
@@ -74,8 +88,8 @@ void _start()
 
     init_interrupts();
 
-    int x = 5 / 0;
-    printf("%x", x);
+    divide_by_zero();
+    cause_page_fault();
 
     printf("It did not fail!\n");
 

@@ -20,9 +20,17 @@ static inline void lidt(void *base, uint16_t size)
 
 static InterruptDescriptor64 idt[256];
 
-void handle_double_fault()
+struct interrupt_frame;
+
+__attribute__((interrupt)) void
+handle_double_fault(struct interrupt_frame *frame, uint64_t error_code)
 {
     panic("EXCEPTION_DOUBLE_FAULT");
+}
+
+__attribute__((interrupt)) void handle_div_zero(struct interrupt_frame *frame)
+{
+    panic("EXCEPTION_DIV_ZERO");
 }
 
 void init_interrupts()
@@ -33,6 +41,7 @@ void init_interrupts()
 
     uint16_t segment_selector = code_segment | 0x000; // GDT, privilege level 0
 
+    idt[0] = interrupts__new_entry(segment_selector, handle_div_zero, TRAP_GATE, 0);
     idt[8] = interrupts__new_entry(segment_selector, handle_double_fault, TRAP_GATE, 0);
     lidt(idt, 255);
 }
@@ -65,8 +74,8 @@ void _start()
 
     init_interrupts();
 
-    int *ptr = (void *)0;
-    *ptr = 5;
+    int x = 5 / 0;
+    printf("%x", x);
 
     printf("It did not fail!\n");
 

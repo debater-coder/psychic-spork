@@ -15,6 +15,7 @@
     "vector": "c",
     "limits": "c",
     "system_error": "c",
-    "necessities.h": "c"
+    "necessities.h": "c",
+    "interrupts.h": "c"
   }
 }

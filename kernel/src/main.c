@@ -42,6 +42,7 @@ void _start()
     init_debug(&tty_ctx, &(TtyStyle){.bg = 0, .fg = 0xffffff});
 
     init_interrupts();
+
     printf("It did not fail!\n");
 
     // We're done, just hang...

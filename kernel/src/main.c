@@ -4,7 +4,7 @@
 #include <limine.h>
 #include "memory/necessities.h"
 #include "debug/include.h"
-#include "drivers/limine_framebuffer/include.h"
+#include "console/console.h"
 
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
@@ -37,12 +37,10 @@ void _start()
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
-    TtyContext tty_ctx = drivers__limine_framebuffer__init(framebuffer);
-    init_debug(&tty_ctx, &(TtyStyle){.bg = 0, .fg = 0xffffff});
+    console__init(framebuffer);
+    init_debug(0xffffff);
 
     init_interrupts();
-
-    panic("AOLIN'S SKILL ISSUE");
 
     printf("It did not fail!\n");
 

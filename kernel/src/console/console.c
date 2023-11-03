@@ -7,18 +7,17 @@
 #include <ssfn.h>
 
 #include "assets/font/font.h"
-#include "driver_interfaces/tty/include.h"
 
-void put_character(const char *msg, const TtyStyle *style)
+void console__put_character(const char *msg, uint32_t fg)
 {
-    ssfn_dst.fg = style->fg;
+    ssfn_dst.fg = fg;
 
     ssfn_putc(*msg);
 }
 
-void put_string(const char *msg, const TtyStyle *style)
+void console__put_string(const char *msg, uint32_t fg)
 {
-    ssfn_dst.fg = style->fg;
+    ssfn_dst.fg = fg;
 
     while (*msg)
     {
@@ -28,7 +27,7 @@ void put_string(const char *msg, const TtyStyle *style)
 
 static struct limine_framebuffer *global_framebuffer;
 
-void clear(unsigned int color)
+void console__clear(unsigned int color)
 {
     for (int i = 0; i < global_framebuffer->height; i++)
     {
@@ -44,7 +43,7 @@ void clear(unsigned int color)
     }
 }
 
-TtyContext drivers__limine_framebuffer__init(struct limine_framebuffer *framebuffer)
+void console__init(struct limine_framebuffer *framebuffer)
 {
     ssfn_src = &fontData;
 
@@ -57,7 +56,4 @@ TtyContext drivers__limine_framebuffer__init(struct limine_framebuffer *framebuf
     ssfn_dst.bg = 0;                 /* background color */
 
     global_framebuffer = framebuffer;
-
-    return (TtyContext){
-        .put_string = &put_string, .put_character = &put_character, .clear = &clear};
 }

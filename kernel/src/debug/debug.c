@@ -1,6 +1,7 @@
-#include "driver_interfaces/tty/include.h"
+#include <stdint.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <console/console.h>
 
 void exit()
 {
@@ -44,14 +45,12 @@ void to_hex_string(unsigned long long int num, char *result)
     result[length] = '\0';
 }
 
-static TtyContext *tty_ctx;
-static TtyStyle *tty_style;
+static uint32_t global_fg = 0xffffff;
 static bool init = false;
 
-void init_debug(TtyContext *tty, TtyStyle *style)
+void init_debug(uint32_t fg)
 {
-    tty_ctx = tty;
-    tty_style = style;
+    global_fg = fg;
     init = true;
 }
 
@@ -59,12 +58,11 @@ void panic(char *msg)
 {
     if (init)
     {
-        tty_ctx->clear(0xff38a169);
+        console__clear(0xff38a169);
 
-        tty_ctx->put_string("Kernel Panic\n============\n\nYour computer has run into an irrecoverable issue and needs to restart. To\nrestart, hold down the power button and you'll be back on track in no time.\nIf the problem persists, note down the error code, fork the repository and fix\nit yourself.\n\nError code: ", &(TtyStyle){.fg = 0, .bg = 0});
+        console__put_string("Kernel Panic\n============\n\nYour computer has run into an irrecoverable issue and needs to restart. To\nrestart, hold down the power button and you'll be back on track in no time.\nIf the problem persists, note down the error code, fork the repository and fix\nit yourself.\n\nError code: ", 0);
 
-        tty_ctx->put_string(
-            msg, &(TtyStyle){.fg = 0xff5555, .bg = 0});
+        console__put_string(msg, 0xff5555);
     }
 
     exit();
@@ -84,23 +82,23 @@ void printf(char *fmt, ...)
             switch (*fmt)
             {
             case 's':
-                tty_ctx->put_string(va_arg(fmt_args, char *), tty_style);
+                console__put_string(va_arg(fmt_args, char *), global_fg);
                 break;
             case 'x':
                 unsigned long long int num = va_arg(fmt_args, unsigned long long int);
                 char num_hex[16];
                 to_hex_string(num, num_hex);
-                tty_ctx->put_string(num_hex, tty_style);
+                console__put_string(num_hex, global_fg);
                 break;
             default:
-                tty_ctx->put_character('%', tty_style);
-                tty_ctx->put_character(*fmt, tty_style);
+                console__put_character('%', global_fg);
+                console__put_character(*fmt, global_fg);
                 break;
             }
         }
         else
         {
-            tty_ctx->put_character(fmt, tty_style);
+            console__put_character(fmt, global_fg);
         }
 
         fmt++;

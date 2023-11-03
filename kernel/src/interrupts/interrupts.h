@@ -1,5 +1,5 @@
 #pragma once
-#include "stdint.h"
+#include <stdint.h>
 
 #define INTERRUPT_GATE 0x8E
 #define TRAP_GATE 0x8F
@@ -16,3 +16,5 @@ typedef struct __attribute__((__packed__)) InterruptDescriptor64
 } InterruptDescriptor64;
 
 InterruptDescriptor64 interrupts__new_entry(uint16_t segment_selector, void (*handler)(), uint8_t type_attributes, uint8_t ist);
+
+void init_interrupts();

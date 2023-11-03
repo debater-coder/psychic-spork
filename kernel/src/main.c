@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <limine.h>
-#include "arch/include.h"
 #include "memory/necessities.h"
 #include "debug/include.h"
 #include "drivers/limine_framebuffer/include.h"
@@ -32,7 +31,7 @@ void _start()
     // Ensure we got a framebuffer.
     if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
     {
-        arch__exit();
+        exit(); // We are so early in the OS that the panic function is not available yet
     }
 
     // Fetch the first framebuffer.
@@ -43,8 +42,10 @@ void _start()
 
     init_interrupts();
 
+    panic("AOLIN'S SKILL ISSUE");
+
     printf("It did not fail!\n");
 
     // We're done, just hang...
-    arch__exit();
+    exit();
 }

@@ -1,7 +1,15 @@
 #include "driver_interfaces/tty/include.h"
-#include "arch/include.h"
 #include <stdbool.h>
 #include <stdarg.h>
+
+void exit()
+{
+    asm("cli"); // If we don't clear interrupts the CPU could un-halt
+    for (;;)    // Just in case we get un-halted the CPU will immediately halt in the next iteration of the loop
+    {
+        asm("hlt");
+    }
+}
 
 unsigned long long int log2(unsigned long long int n)
 {
@@ -59,7 +67,7 @@ void panic(char *msg)
             msg, &(TtyStyle){.fg = 0xff5555, .bg = 0});
     }
 
-    arch__exit();
+    exit();
 }
 
 void printf(char *fmt, ...)

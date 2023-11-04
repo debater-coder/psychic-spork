@@ -5,6 +5,7 @@
 #include "memory/necessities.h"
 #include "debug/include.h"
 #include "console/console.h"
+#include "interrupts/interrupts.h"
 
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
@@ -42,7 +43,7 @@ void _start()
 
     init_interrupts();
 
-    divide_by_zero();
+    // divide_by_zero();
 
     printf("It did not fail!\n");
 

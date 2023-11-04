@@ -29,9 +29,9 @@ static struct limine_framebuffer *global_framebuffer;
 
 void console__clear(unsigned int color)
 {
-    for (int i = 0; i < global_framebuffer->height; i++)
+    for (uint64_t i = 0; i < global_framebuffer->height; i++)
     {
-        for (int j = 0; j < global_framebuffer->width; j++)
+        for (uint64_t j = 0; j < global_framebuffer->width; j++)
         {
             uint32_t *framebuffer_pointer = global_framebuffer->address;
 

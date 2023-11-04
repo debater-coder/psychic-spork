@@ -16,6 +16,8 @@
     "limits": "c",
     "system_error": "c",
     "necessities.h": "c",
-    "interrupts.h": "c"
+    "interrupts.h": "c",
+    "idt.h": "c",
+    "init_exceptions.h": "c"
   }
 }

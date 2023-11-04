@@ -91,8 +91,8 @@ void printf(char *fmt, ...)
                 console__put_string(num_hex, global_fg);
                 break;
             default:
-                console__put_character('%', global_fg);
-                console__put_character(*fmt, global_fg);
+                console__put_character("%", global_fg);
+                console__put_character(fmt, global_fg);
                 break;
             }
         }

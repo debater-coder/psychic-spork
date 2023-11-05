@@ -18,6 +18,7 @@
     "necessities.h": "c",
     "interrupts.h": "c",
     "idt.h": "c",
-    "init_exceptions.h": "c"
+    "init_exceptions.h": "c",
+    "stdbool.h": "c"
   }
 }

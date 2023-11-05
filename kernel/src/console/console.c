@@ -53,7 +53,7 @@ void console__init(struct limine_framebuffer *framebuffer)
     ssfn_dst.p = framebuffer->pitch; /* bytes per line */
     ssfn_dst.x = ssfn_dst.y = 0;     /* pen position */
     ssfn_dst.fg = 0xFFFFFF;          /* foreground color */
-    ssfn_dst.bg = 0;                 /* background color */
+    ssfn_dst.bg = 0xff000000;        /* background color */
 
     global_framebuffer = framebuffer;
 }

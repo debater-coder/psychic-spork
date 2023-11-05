@@ -43,10 +43,10 @@ void _start()
 
     init_interrupts();
 
-    divide_by_zero();
-
     printf("It did not fail!\n");
 
-    // We're done, just hang...
-    exit();
+    for (;;)
+    {
+        asm("hlt");
+    }
 }

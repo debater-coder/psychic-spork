@@ -2,6 +2,7 @@
 #include "interrupts/interrupts.h"
 #include "interrupts/idt.h"
 #include "interrupts/exceptions/init_exceptions.h"
+#include "interrupts/hardware/init_hardware.h"
 
 static InterruptDescriptor64 idt[256];
 
@@ -16,4 +17,7 @@ void init_interrupts()
     init_exceptions(idt, segment_selector);
 
     lidt(idt, 255);
+
+    init_hardware();
+    asm("sti");
 }

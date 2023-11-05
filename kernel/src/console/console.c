@@ -41,6 +41,9 @@ void console__clear(unsigned int color)
         // Reset to top
         ssfn_dst.x = ssfn_dst.y = 0;
     }
+
+    // Set new bg
+    ssfn_dst.bg = 0xff000000 | color;
 }
 
 void console__init(struct limine_framebuffer *framebuffer)

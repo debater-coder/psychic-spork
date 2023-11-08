@@ -48,7 +48,7 @@ void _start()
     // Ensure we got a framebuffer.
     if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
     {
-        exit(); // We are so early in the OS that the panic function is not available yet
+        panic("NO_FRAMEBUFFER"); // Panic function before init_debug will just exit
     }
 
     // Fetch the first framebuffer.

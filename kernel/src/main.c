@@ -8,6 +8,8 @@
 #include "interrupts/interrupts.h"
 #include "interrupts/hardware/port.h"
 
+static InterruptDescriptor64 idt[256];
+
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0};
@@ -28,6 +30,18 @@ void divide_by_zero()
     asm("movl $0, %%edx; divl %%edx" ::: "ax", "dx");
 }
 
+void kernel_main()
+{
+
+    printf("BenchOS 0.1.0\n");
+    for (;;)
+    {
+        char input[] = " ";
+        console__input_character(input, 0xffffff);
+        printf("\nYou wrote: %s\n", input);
+    }
+}
+
 void _start()
 {
     // Ensure we got a framebuffer.
@@ -42,20 +56,8 @@ void _start()
     console__init(framebuffer);
     init_debug(0xffffff);
 
-    init_interrupts();
+    init_interrupts(idt);
 
-    printf("It did not fail!\n");
-
-    for (;;)
-    {
-        char lowercase[] = "??1234567890-=\b\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./??? ";
-        uint8_t scan_code = port_read(0x60);
-        if (scan_code < 59)
-        {
-            console__put_character(&lowercase[scan_code], 0xffffff);
-        }
-        while (port_read(0x60) == scan_code)
-        {
-        }
-    }
+    kernel_main();
+    exit();
 }

@@ -7,6 +7,8 @@
 #include <ssfn.h>
 
 #include "assets/font/font.h"
+#include "console.h"
+#include "interrupts/hardware/port.h"
 
 void console__put_character(const char *msg, uint32_t fg)
 {
@@ -59,4 +61,22 @@ void console__init(struct limine_framebuffer *framebuffer)
     ssfn_dst.bg = 0xff000000;        /* background color */
 
     global_framebuffer = framebuffer;
+}
+void console__input_character(char *input, uint32_t fg)
+{
+    char lowercase[] = "??1234567890-=\b\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./??? ";
+
+    uint8_t scan_code = port_read(0x60);
+    while (scan_code >= 59)
+    {
+        scan_code = port_read(0x60);
+    }
+
+    console__put_character(&lowercase[scan_code], fg);
+    *input = lowercase[scan_code];
+
+    while (port_read(0x60) == scan_code)
+    {
+        // Wait until next key pressed or key released
+    }
 }

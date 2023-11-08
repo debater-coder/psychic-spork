@@ -5,8 +5,6 @@
 #include <debug/include.h>
 #include "interrupts/hardware/pic.h"
 
-static InterruptDescriptor64 idt[256];
-
 struct interrupt_frame;
 
 __attribute__((interrupt)) void handle_keypress(struct interrupt_frame *frame)
@@ -14,7 +12,7 @@ __attribute__((interrupt)) void handle_keypress(struct interrupt_frame *frame)
     printf("Keypress\n");
 }
 
-void init_interrupts()
+void init_interrupts(InterruptDescriptor64 idt[256])
 {
     uint16_t code_segment;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct Pic
 {
@@ -13,7 +14,8 @@ void Pic__end_of_interrupt(Pic pic);
 uint8_t PIC__read_mask(Pic pic);
 void PIC__write_mask(Pic pic, uint8_t mask);
 
-typedef struct ChainedPics {
+typedef struct ChainedPics
+{
     Pic pics[2];
 } ChainedPics;
 

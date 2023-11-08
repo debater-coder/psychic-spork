@@ -7,6 +7,10 @@
 #define CMD_INIT 0x11
 #define CMD_END_OF_INTERRUPT 0x20
 #define MODE_8086 0x01
+#define PIC_1_COMMAND 0x20
+#define PIC_1_DATA 0x21
+#define PIC_2_COMMAND 0xa0
+#define PIC_2_DATA 0xa1
 
 // Implementation based on: https://docs.rs/crate/pic8259/0.10.1/source/src/lib.rs
 
@@ -52,7 +56,7 @@ static void wait()
 
 void ChainedPics__initialise(ChainedPics self)
 {
-    // Tell both PICs we are doing 3 byte init
+    // Tell both PICs we are doing init
     port_write(self.pics[0].command_port, CMD_INIT);
     wait();
     port_write(self.pics[1].command_port, CMD_INIT);
@@ -79,7 +83,9 @@ void ChainedPics__initialise(ChainedPics self)
     // Init is done now let's do masks:
     // Set correct masks:
     port_write(self.pics[0].data_port, 0xfd); // 11111101
+    wait();
     port_write(self.pics[1].data_port, 0xff); // 11111111
+    wait();
 }
 
 void ChainedPics__notify_end_of_interrupt(ChainedPics self, uint8_t interrupt_id)

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limine.h>
+#include <stdbool.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #define SSFN_CONSOLEBITMAP_CONTROL
@@ -78,5 +79,17 @@ void console__input_character(char *input, uint32_t fg)
     while (port_read(0x60) == scan_code)
     {
         // Wait until next key pressed or key released
+    }
+}
+
+void console__input_characters(char *input, int count, uint32_t fg, bool null_terminate)
+{
+    for (int i = 0; i < count; i++)
+    {
+        console__input_character(&input[i], fg);
+    }
+    if (null_terminate)
+    {
+        input[count] = '\0';
     }
 }

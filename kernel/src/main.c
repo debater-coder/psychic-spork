@@ -36,8 +36,9 @@ void kernel_main()
     printf("BenchOS 0.1.0\n");
     for (;;)
     {
-        char input[] = " ";
-        console__input_character(input, 0xffffff);
+        char input[9];
+        printf("Input 8 characters: ");
+        console__input_characters(input, 8, 0xffff00, true);
         printf("\nYou wrote: %s\n", input);
     }
 }

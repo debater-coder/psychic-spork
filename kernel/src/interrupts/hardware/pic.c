@@ -11,87 +11,52 @@
 #define PIC_1_DATA 0x21
 #define PIC_2_COMMAND 0xa0
 #define PIC_2_DATA 0xa1
-
-// Implementation based on: https://docs.rs/crate/pic8259/0.10.1/source/src/lib.rs
-
-bool Pic__handles_interrupt(Pic pic, uint8_t interrupt_id)
-{
-    return pic.offset <= interrupt_id && interrupt_id < pic.offset + 8;
-}
-
-void Pic__end_of_interrupt(Pic pic)
-{
-    port_write(pic.command_port, CMD_END_OF_INTERRUPT);
-}
-
-uint8_t PIC__read_mask(Pic pic)
-{
-    return port_read(pic.data_port);
-}
-
-void PIC__write_mask(Pic pic, uint8_t mask)
-{
-    port_write(pic.data_port, mask);
-}
-
-ChainedPics ChainedPics__new(uint8_t offset1, uint8_t offset2)
-{
-    return (ChainedPics){
-        .pics = {
-            (Pic){
-                .offset = offset1,
-                .command_port = 0x20,
-                .data_port = 0x21},
-            (Pic){
-                .offset = offset2,
-                .command_port = 0xa0,
-                .data_port = 0xa1}},
-    };
-}
+#define PIC_EOI 0x20
 
 static void wait()
 {
     port_write(0x80, 0);
 }
 
-void ChainedPics__initialise(ChainedPics self)
+void Pic__initialise()
 {
     // Tell both PICs we are doing init
-    port_write(self.pics[0].command_port, CMD_INIT);
+    port_write(PIC_1_COMMAND, CMD_INIT);
     wait();
-    port_write(self.pics[1].command_port, CMD_INIT);
+    port_write(PIC_2_COMMAND, CMD_INIT);
     wait();
 
     // Set up offsets
-    port_write(self.pics[0].data_port, self.pics[0].offset);
+    port_write(PIC_1_DATA, 0x20);
     wait();
-    port_write(self.pics[1].data_port, self.pics[1].offset);
+    port_write(PIC_2_DATA, 0x28);
     wait();
 
     // Chain Pics
-    port_write(self.pics[0].data_port, 4);
+    port_write(PIC_1_DATA, 4);
     wait();
-    port_write(self.pics[1].data_port, 2);
+    port_write(PIC_2_DATA, 2);
     wait();
 
     // Set mode
-    port_write(self.pics[0].data_port, MODE_8086);
+    port_write(PIC_1_DATA, MODE_8086);
     wait();
-    port_write(self.pics[1].data_port, MODE_8086);
+    port_write(PIC_1_DATA, MODE_8086);
     wait();
 
     // Init is done now let's do masks:
     // Set correct masks:
-    port_write(self.pics[0].data_port, 0xfd); // 11111101
+    port_write(PIC_1_DATA, 0xfd); // 11111101 (only keyboard)
     wait();
-    port_write(self.pics[1].data_port, 0xff); // 11111111
+    port_write(PIC_2_DATA, 0xff); // 11111111
     wait();
 }
 
-void ChainedPics__notify_end_of_interrupt(ChainedPics self, uint8_t interrupt_id)
+void Pic__notify_end_of_interrupt(uint8_t interrupt_id)
 {
     if (interrupt_id >= 8)
-        Pic__end_of_interrupt(self.pics[1]);
-
-    Pic__end_of_interrupt(self.pics[0]);
+    {
+        port_write(PIC_2_COMMAND, PIC_EOI);
+    }
+    port_write(PIC_1_COMMAND, PIC_EOI);
 }

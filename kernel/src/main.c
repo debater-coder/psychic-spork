@@ -6,6 +6,7 @@
 #include "debug/include.h"
 #include "console/console.h"
 #include "interrupts/interrupts.h"
+#include "interrupts/hardware/port.h"
 
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
@@ -47,6 +48,14 @@ void _start()
 
     for (;;)
     {
-        asm("hlt");
+        char lowercase[] = "??1234567890-=\b\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./??? ";
+        uint8_t scan_code = port_read(0x60);
+        if (scan_code < 59)
+        {
+            console__put_character(&lowercase[scan_code], 0xffffff);
+        }
+        while (port_read(0x60) == scan_code)
+        {
+        }
     }
 }

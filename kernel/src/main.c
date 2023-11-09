@@ -19,6 +19,11 @@ static volatile struct limine_memmap_request memmap_request = {
     .revision = 0,
 };
 
+static volatile struct limine_hhdm_request hhdm_request = {
+    .id = LIMINE_HHDM_REQUEST,
+    .revision = 0,
+};
+
 void cause_page_fault()
 {
     int x = *(int *)(0);
@@ -43,8 +48,9 @@ void strcpy(char *dst, char *src)
 
 void kernel_main()
 {
-
     printf("BenchOS 0.1.0\n");
+    printf("Using framebuffer at 0x%x\n", framebuffer_request.response->framebuffers[0]->address);
+    printf("Offset 0x%x\n", hhdm_request.response->offset);
 
     printf("Detecting memory...\n");
     if (memmap_request.response == NULL)
@@ -52,7 +58,7 @@ void kernel_main()
         panic("NO_MEMORY_MAP");
     }
 
-    for (int i = 0; i < memmap_request.response->entry_count; i++)
+    for (uint64_t i = 0; i < memmap_request.response->entry_count; i++)
     {
         uint64_t type = memmap_request.response->entries[i]->type;
         char memmap_type[256];
@@ -94,15 +100,16 @@ void kernel_main()
             strcpy(memmap_type, "UNKNOWN");
             break;
         }
-
-        printf("    base: 0x%x, length: 0x%x, status: %s\n", memmap_request.response->entries[i]->base, memmap_request.response->entries[i]->length, memmap_type);
+        uint64_t phys = memmap_request.response->entries[i]->base;
+        uint64_t virt = hhdm_request.response->offset + phys; // HAHA WHEN I PLUG THIS INTO PRINTF IT EXPLODES HAHA
+        printf("    base: 0x%x, length: 0x%x, status: %s\n", phys, memmap_request.response->entries[i]->length, memmap_type);
     }
 
     for (;;)
     {
-        char input[9];
-        printf("Input 8 characters: ");
-        console__input_characters(input, 8, 0xffff00, true);
+        char input[257];
+        printf("Input up to 256 characters (ESC to stop): ");
+        console__input_characters(input, 256, 0xffff00, true);
         printf("\nYou wrote: %s\n", input);
     }
 }
@@ -120,6 +127,11 @@ void _start()
 
     console__init(framebuffer);
     init_debug(0xffffff);
+
+    if (hhdm_request.response == NULL)
+    {
+        panic("NO_HHDM");
+    }
 
     init_interrupts(idt);
 

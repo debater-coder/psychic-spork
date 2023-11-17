@@ -30,7 +30,7 @@ void console__put_string(const char *msg, uint32_t fg)
 
 static struct limine_framebuffer *global_framebuffer;
 
-void console__clear(unsigned int color)
+void console__clear(uint32_t color)
 {
     for (uint64_t i = 0; i < global_framebuffer->height; i++)
     {

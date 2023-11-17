@@ -46,11 +46,23 @@ void strcpy(char *dst, char *src)
     *dst = *src;
 }
 
+typedef struct FrameAllocator
+{
+    uint64_t physical_offset;
+} FrameAllocator;
+
+uint64_t memory__frame_allocator_phys_to_virt(FrameAllocator *self, uint64_t address)
+{
+    return self->physical_offset + address;
+};
+
 void kernel_main()
 {
     printf("BenchOS 0.1.0\n");
     printf("Using framebuffer at 0x%x\n", framebuffer_request.response->framebuffers[0]->address);
-    printf("Offset 0x%x\n", hhdm_request.response->offset);
+    FrameAllocator frame_allocator;
+    frame_allocator.physical_offset = hhdm_request.response->offset;
+    printf("Offset 0x%x\n", frame_allocator.physical_offset);
 
     printf("Detecting memory...\n");
     if (memmap_request.response == NULL)
@@ -101,8 +113,12 @@ void kernel_main()
             break;
         }
         uint64_t phys = memmap_request.response->entries[i]->base;
-        uint64_t virt = hhdm_request.response->offset + phys;
-        printf("    base: 0x%x, length: 0x%x, status: %s\n", virt, memmap_request.response->entries[i]->length, memmap_type);
+        printf(
+            "    phys: 0x%x, virt: 0x%x, length: 0x%x, status: %s\n",
+            phys,
+            memory__frame_allocator_phys_to_virt(&frame_allocator, phys),
+            memmap_request.response->entries[i]->length,
+            memmap_type);
     }
 
     for (;;)

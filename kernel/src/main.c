@@ -46,6 +46,20 @@ void strcpy(char *dst, char *src)
     *dst = *src;
 }
 
+bool stringeq(char *a, char *b)
+{
+    while (*a || *b)
+    {
+        if (*a != *b)
+        {
+            return false;
+        }
+        a++;
+        b++;
+    }
+    return true;
+}
+
 typedef struct FrameAllocator
 {
     uint64_t physical_offset;
@@ -121,12 +135,34 @@ void kernel_main()
             memmap_type);
     }
 
+    printf("\n\nThis is the prompt. Type `help` for more info.\n\n");
+
     for (;;)
     {
         char input[257];
-        printf("Input up to 256 characters (ESC to stop): ");
+
+        printf("> ");
         console__input_characters(input, 256, 0xffff00, true);
-        printf("\nYou wrote: %s\n", input);
+        printf("\n");
+
+        if (!*input)
+        {
+        }
+        else if (stringeq(input, "exit"))
+        {
+            printf("exiting...\n");
+            exit();
+        }
+        else if (stringeq(input, "help"))
+        {
+            printf("BenchOS v0.1.0\nCommands:\n    - help\n    - exit\n");
+        }
+        else
+        {
+            console__put_string("Unknown command: ", 0xff0000);
+            console__put_string(input, 0xff0000);
+            console__put_string("\n", 0xff0000);
+        }
     }
 }
 

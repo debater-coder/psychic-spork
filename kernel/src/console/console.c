@@ -65,7 +65,7 @@ void console__init(struct limine_framebuffer *framebuffer)
 }
 void console__input_character(char *input, uint32_t fg)
 {
-    char lowercase[] = "?\0001234567890-=\b\tqwertyuiop[]\n?asdfghjkl;'`?\\zxcvbnm,./??? ";
+    char lowercase[] = "?\0001234567890-=\b\tqwertyuiop[]\0?asdfghjkl;'`?\\zxcvbnm,./??? ";
 
     uint8_t scan_code = port_read(0x60);
     while (scan_code >= 59)
@@ -73,7 +73,7 @@ void console__input_character(char *input, uint32_t fg)
         scan_code = port_read(0x60);
     }
 
-    if (scan_code > 1)
+    if (lowercase[scan_code] > 1)
     {
         console__put_character(&lowercase[scan_code], fg);
     }

@@ -86,7 +86,7 @@ void printf(char *fmt, ...)
                 break;
             case 'x':
                 unsigned long long int num = va_arg(fmt_args, unsigned long long int);
-                char num_hex[16];
+                char num_hex[17];
                 to_hex_string(num, num_hex);
                 console__put_string(num_hex, global_fg);
                 break;

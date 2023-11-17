@@ -101,8 +101,8 @@ void kernel_main()
             break;
         }
         uint64_t phys = memmap_request.response->entries[i]->base;
-        uint64_t virt = hhdm_request.response->offset + phys; // HAHA WHEN I PLUG THIS INTO PRINTF IT EXPLODES HAHA
-        printf("    base: 0x%x, length: 0x%x, status: %s\n", phys, memmap_request.response->entries[i]->length, memmap_type);
+        uint64_t virt = hhdm_request.response->offset + phys;
+        printf("    base: 0x%x, length: 0x%x, status: %s\n", virt, memmap_request.response->entries[i]->length, memmap_type);
     }
 
     for (;;)

@@ -165,6 +165,12 @@ Commands:\n\
         {
             console__clear(0);
         }
+        else if (stringeq(input, "dumppage"))
+        {
+            printf("Enter address: ");
+            console__input_characters(input, 16, 0xffff00, true);
+            printf("\n0x%x\n", from_hex_string(input));
+        }
         else
         {
             console__put_string("Unknown command: ", 0xff0000);

@@ -155,7 +155,15 @@ void kernel_main()
         }
         else if (stringeq(input, "help"))
         {
-            printf("BenchOS v0.1.0\nCommands:\n    - help\n    - exit\n");
+            printf("BenchOS v0.1.0\n\
+Commands:\n\
+    - help\n\    
+    - exit\n\
+    - clear\n");
+        }
+        else if (stringeq(input, "clear"))
+        {
+            console__clear(0);
         }
         else
         {
